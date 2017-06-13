@@ -35,15 +35,14 @@ export default class ListCom extends Component {
 
   renderRow(rowData){
     return(
-      <View style={{flexDirection:"row"}}>
+      <View style={{flexDirection:"row", borderColor:"white", borderWidth:1}}>
         <View style={{flex: 3}}>
           <Image source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path}}
-            style={{width: 100, height: 100}}/>
+            style={{width: 100, height: 130}}/>
         </View>
-
         <View style={{flex: 7}}>
           <Text>{rowData.title}</Text>
-          <Text>overview: {rowData.overview}</Text>
+          <Text numberOfLines={4}>{rowData.overview}</Text>
         </View>
       </View>
 
