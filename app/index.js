@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Text,
   View,
-  ListView
+  ListView,
+  Image
 } from 'react-native';
 
 export default class ListCom extends Component {
@@ -21,7 +22,7 @@ export default class ListCom extends Component {
      let responseJson = await response.json();
      console.log(JSON.stringify(responseJson));
      this.setState({
-       dataSource: this.state.dataSource.cloneWithRows(JSON.stringify(responseJson))
+       dataSource: this.state.dataSource.cloneWithRows(responseJson.results)
      })
    } catch(error) {
      console.error(error);
@@ -34,7 +35,18 @@ export default class ListCom extends Component {
 
   renderRow(rowData){
     return(
-        <Text>DEs</Text>
+      <View style={{flexDirection:"row"}}>
+        <View style={{flex: 3}}>
+          <Image source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path}}
+            style={{width: 100, height: 100}}/>
+        </View>
+
+        <View style={{flex: 7}}>
+          <Text>{rowData.title}</Text>
+          <Text>overview: {rowData.overview}</Text>
+        </View>
+      </View>
+
     )
   }
 
@@ -43,12 +55,11 @@ export default class ListCom extends Component {
       <View style={{backgroundColor: "orange"}}>
         <ListView
             dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
+            renderRow={(rowData) => this.renderRow(rowData)}
+            enableEmptySections={true}
           />
       </View>
     )
   }
-
-
 
 }
