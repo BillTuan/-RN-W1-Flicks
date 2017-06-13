@@ -12,12 +12,12 @@ import {
   View
 } from 'react-native';
 
-import ListView from './app/index';
+import Tabbar from './app/tabbar';
 
 export default class Flicks extends Component {
   render() {
     return (
-      <ListView/>
+      <Tabbar />
     );
   }
 }

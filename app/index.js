@@ -9,18 +9,17 @@ import {
 } from 'react-native';
 
 export default class ListCom extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       dataSource: ds.cloneWithRows([]),
     };
   }
-  async getMoviesFromApi() {
+  async getMoviesFromApi(apiLink) {
    try {
-     let response = await fetch('https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed');
+     let response = await fetch(apiLink);
      let responseJson = await response.json();
-     console.log(JSON.stringify(responseJson));
      this.setState({
        dataSource: this.state.dataSource.cloneWithRows(responseJson.results)
      })
@@ -30,22 +29,24 @@ export default class ListCom extends Component {
  }
 
   componentDidMount(){
-    this.getMoviesFromApi();
+    this.getMoviesFromApi(this.props.apiLink);
   }
 
   renderRow(rowData){
     return(
-      <View style={{flexDirection:"row", borderColor:"white", borderWidth:1}}>
-        <View style={{flex: 3}}>
-          <Image source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path}}
-            style={{width: 100, height: 130}}/>
+      <View>
+        <View style={{flexDirection:"row"}}>
+          <View style={{flex: 3}}>
+            <Image source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path}}
+              style={{width: 100, height: 130}}/>
+          </View>
+          <View style={{flex: 7}}>
+            <Text>{rowData.title}</Text>
+            <Text numberOfLines={4}>{rowData.overview}</Text>
+          </View>
         </View>
-        <View style={{flex: 7}}>
-          <Text>{rowData.title}</Text>
-          <Text numberOfLines={4}>{rowData.overview}</Text>
-        </View>
+        <View style={{height: 2, backgroundColor: "white"}}></View>
       </View>
-
     )
   }
 
@@ -60,5 +61,8 @@ export default class ListCom extends Component {
       </View>
     )
   }
+}
 
+ListCom.propType = {
+  apiLink: React.PropTypes.string
 }
