@@ -5,7 +5,8 @@ import {
   Text,
   View,
   Navigator,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput
 } from 'react-native';
 
 var NavigationBarRouteMapper = {
@@ -22,7 +23,9 @@ RightButton: (route, navigator, index, navState) => {
   return
 },
 Title: (route, navigator, index, navState) => {
-  return;
+  if(route.name == 'TabView'){
+    return (<Text style={{marginTop: 25, marginLeft: 90, fontSize: 20, fontWeight: '900'}}>Flicks</Text>)
+  }
 },
 }
 const styles = StyleSheet.create({
@@ -32,5 +35,7 @@ text:{
 });
 module.exports = (
 <Navigator.NavigationBar
-  routeMapper={NavigationBarRouteMapper} />
+  routeMapper={NavigationBarRouteMapper}
+  style ={{backgroundColor: 'orange', height: 30}}
+/>
 )

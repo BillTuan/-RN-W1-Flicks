@@ -64,6 +64,7 @@ export default class TabbarCom extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 30,
   },
   indicator: {
     backgroundColor: '#F6AA1E',

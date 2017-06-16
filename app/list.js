@@ -6,7 +6,9 @@ import {
   View,
   ListView,
   Image,
-  TouchableHighlight
+  TouchableHighlight,
+  TextInput,
+
 } from 'react-native';
 
 export default class ListCom extends Component {
@@ -15,6 +17,7 @@ export default class ListCom extends Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       dataSource: ds.cloneWithRows([]),
+      searchText: ''
     };
   }
   async getMoviesFromApi(apiLink) {
@@ -37,7 +40,12 @@ export default class ListCom extends Component {
     return(
       <TouchableHighlight onPress={() => this.props.navigator.push({name: 'DetailView',
         passProps: {
+          imageURL: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path,
           title: rowData.title,
+          date: rowData.release_date,
+          vote: rowData.vote_average,
+          overview: rowData.overview,
+          popularity: rowData.popularity,
         }
       })}>
         <View>
@@ -47,7 +55,7 @@ export default class ListCom extends Component {
                 style={{width: 100, height: 130}}/>
             </View>
             <View style={{flex: 7}}>
-              <Text>{rowData.title}</Text>
+              <Text style={{fontWeight: '600', fontSize: 22, marginBottom: 15, color: 'black'}}>{rowData.title}</Text>
               <Text numberOfLines={4}>{rowData.overview}</Text>
             </View>
           </View>
@@ -57,9 +65,44 @@ export default class ListCom extends Component {
     )
   }
 
+setSearchText(event) {
+ let searchText = event.nativeEvent.text;
+ this.setState({searchText});
+ fetch(this.props.apiLink)
+ .then((response) => response.json())
+ . then((responseJson) => {
+     let filteredData = this.filterNotes(searchText, responseJson.results);
+
+     this.setState({
+       dataSource: this.state.dataSource.cloneWithRows(filteredData),
+     });
+ });
+}
+
+filterNotes(searchText, notes) {
+
+  let row = [];
+  let text = searchText.toLowerCase();
+  for (var i = 0; i < notes.length; i++) {
+    // console.log(note);
+    let title = notes[i].title.toLowerCase();
+   if (title.search(text) !== -1) {
+     row.push(notes[i])
+   }
+  }
+  return row;
+}
+
   render(){
     return(
       <View style={{backgroundColor: "orange"}}>
+        <View style={{borderBottomWidth: 1, borderTopWidth: 1, backgroundColor: 'white'}}>
+          <TextInput
+            placeholder = 'Search...'
+            value={this.state.searchText}
+            onChange={this.setSearchText.bind(this)}
+          />
+        </View>
         <ListView
             dataSource={this.state.dataSource}
             renderRow={(rowData) => this.renderRow(rowData)}

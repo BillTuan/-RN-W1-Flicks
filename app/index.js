@@ -5,7 +5,8 @@ import {
   Text,
   View,
   ListView,
-  Navigator
+  Navigator,
+  StatusBar
 } from 'react-native';
 
 import TabBar from './tabbar';
@@ -15,8 +16,16 @@ import CustomNavBar from './navbar';
 export default class Movie extends Component {
   renderScene(route, navigator){
     switch (route.name) {
-      case "TabView": return(<TabBar navigator = {navigator} {...route.passProps}/>);
-      case "DetailView": return(<DetailPage title={route.passProps.title}/>);
+      case "TabView": return(
+          <TabBar navigator = {navigator} {...route.passProps}/>
+      );
+      case "DetailView": return(<DetailPage title={route.passProps.title}
+        date =  {route.passProps.date}
+        vote =  {route.passProps.vote}
+        overview =  {route.passProps.overview}
+        imageURL = {route.passProps.imageURL}
+        popularity = {route.passProps.popularity}
+       />);
     }
   }
   configureScene(){
