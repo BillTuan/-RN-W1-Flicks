@@ -5,13 +5,15 @@ import {
   Text,
   View,
   ListView,
-  Image,
   Animated,
  ScrollView,
  LayoutAnimation,
  TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Image from 'react-native-image-progress';
+import * as Progress from 'react-native-progress';
+
 export default class DetailCom extends Component {
   constructor() {
        super();
@@ -19,6 +21,7 @@ export default class DetailCom extends Component {
          height: 200,
          line : 4,
          marginScroll: 450,
+         loading: false,
        }
     }
     clickToOpen(){
@@ -42,6 +45,8 @@ export default class DetailCom extends Component {
       })
     }
 
+
+
   render(){
     var height = this.state.height;
     var line = this.state.line; // 0: will be showed all lines
@@ -49,7 +54,14 @@ export default class DetailCom extends Component {
     var popularity = parseInt(this.props.popularity);
     return(
        <View style={{flex: 1, marginTop: 30 }}>
-         <Image source={{uri: this.props.imageURL}}
+         <Image source={{uri: "https://image.tmdb.org/t/p/original" + this.props.imageURL}}
+         indicator={Progress.Circle}
+         indicatorProps={{
+             size: 80,
+             borderWidth: 0,
+             color: 'rgba(150, 150, 150, 1)',
+             unfilledColor: 'rgba(200, 200, 200, 0.2)'
+           }}
         style={{flex: 1}}>
         <View style={[styles.container,{marginTop: marginScroll}]}>
           <ScrollView
