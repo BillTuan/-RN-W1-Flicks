@@ -32,7 +32,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<iframe class="imgur-embed" width="100%" height="966" frameborder="0" src="http://i.imgur.com/q0tQOuh.gifv#embed"></iframe>
+<img src='http://i.imgur.com/q0tQOuh.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
