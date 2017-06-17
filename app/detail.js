@@ -13,6 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Image from 'react-native-image-progress';
 import * as Progress from 'react-native-progress';
+import moment from 'moment';
 
 export default class DetailCom extends Component {
   constructor() {
@@ -52,6 +53,7 @@ export default class DetailCom extends Component {
     var line = this.state.line; // 0: will be showed all lines
     var marginScroll = this.state.marginScroll;
     var popularity = parseInt(this.props.popularity);
+    var date = moment(this.props.date).format('ll');
     return(
        <View style={{flex: 1, marginTop: 30 }}>
          <Image source={{uri: "https://image.tmdb.org/t/p/original" + this.props.imageURL}}
@@ -74,7 +76,7 @@ export default class DetailCom extends Component {
                     </Text>
                     <Text style={[styles.text]}>
                       <Icon name='ticket' size={15} color='#fff'/>
-                      {this.props.date}
+                      {date}
                     </Text>
                     <View style={{flexDirection:'row', marginTop: 3}}>
                         <Text style={styles.text}>
