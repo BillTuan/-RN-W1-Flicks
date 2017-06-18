@@ -42,15 +42,14 @@ export default class TabbarCom extends Component {
   _renderScene = ({route}) => {
     switch(route.key){
       case '1':
-        return <ListView apiLink="https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed" navigator = {this.props.navigator}/>;
+        return <ListView apiLink="https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=" navigator = {this.props.navigator}/>;
       case '2':
-        return <ListView apiLink="https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed" navigator = {this.props.navigator}/>
+        return <ListView apiLink="https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=" navigator = {this.props.navigator}/>
     }
   };
 
   render() {
     return (
-      // <ListView apiLink="https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"/>
       <TabViewAnimated
         style={styles.container}
         navigationState={this.state}

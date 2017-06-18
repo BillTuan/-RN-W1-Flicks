@@ -14,6 +14,7 @@ import {
 import Image from 'react-native-image-progress';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 export default class ListCom extends Component {
   constructor(props) {
     super(props);
@@ -23,22 +24,34 @@ export default class ListCom extends Component {
       searchText: '',
       refreshing: false,
       listView: true,
+      currentPage: 1,
+      isFirstPage: true,
+      _postData: [],
     };
   }
-  async getMoviesFromApi(apiLink) {
-   try {
-     let response = await fetch(apiLink);
-     let responseJson = await response.json();
-     this.setState({
-       dataSource: this.state.dataSource.cloneWithRows(responseJson.results)
-     })
-   } catch(error) {
-     console.error(error);
-   }
+  getMoviesFromApi() {
+    if(this.state.isFirstPage){
+      this.setState({
+        _postData: []
+      })
+    }
+    return fetch(this.props.apiLink + this.state.currentPage)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({
+        _postData : this.state._postData.concat(responseJson.results),
+        dataSource: this.state.dataSource.cloneWithRows(this.state._postData),
+        isFirstPage: false,
+        currentPage: this.state.currentPage + 1,
+      })
+    })
+    .catch((error) => {
+    console.error(error);
+  });
  }
 
-  componentDidMount(){
-    this.getMoviesFromApi(this.props.apiLink);
+  componentWillMount(){
+    this.getMoviesFromApi();
   }
 
   renderRow(rowData){
@@ -57,7 +70,7 @@ export default class ListCom extends Component {
           <View style={{flexDirection:"row"}}>
             <View style={{flex: 3}}>
               <Image
-                source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path}}
+                source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path }}
                 indicator={Progress.Pie}
                 indicatorProps={{
                     size: 50,
@@ -91,7 +104,7 @@ renderRowGrid(rowData){
       }
     })}
     style={styles.item}>
-        <View style={{}}>
+        <View>
             <Image
               source={{uri: 'https://image.tmdb.org/t/p/w342' + rowData.poster_path}}
               indicator={Progress.Pie}
@@ -103,9 +116,7 @@ renderRowGrid(rowData){
                 }}
               style={{width: 150, height: 180}}
             />
-          <View style={{}}>
             <Text style={{fontWeight: '600', fontSize: 22, marginBottom: 15, color: 'black'}}>{rowData.title}</Text>
-          </View>
         </View>
      </TouchableHighlight>
   )
@@ -113,14 +124,10 @@ renderRowGrid(rowData){
 setSearchText(event) {
  let searchText = event.nativeEvent.text;
  this.setState({searchText});
- fetch(this.props.apiLink)
- .then((response) => response.json())
- . then((responseJson) => {
-     let filteredData = this.filterNotes(searchText, responseJson.results);
 
-     this.setState({
-       dataSource: this.state.dataSource.cloneWithRows(filteredData),
-     });
+ let filteredData = this.filterNotes(searchText, this.state._postData);
+ this.setState({
+   dataSource: this.state.dataSource.cloneWithRows(filteredData),
  });
 }
 
@@ -136,42 +143,48 @@ filterNotes(searchText, notes) {
   return row;
 }
 _onRefresh(){
-  this.setState({refreshing: true});
-  fetch(this.props.apiLink)
-  .then((response) => response.json())
-  . then((responseJson) => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(responseJson.results),
-        refreshing: false
-      });
-  });
+  this.setState({refreshing: true, isFirstPage: true,});
+
+  this.getMoviesFromApi().then(() => {
+    this.setState({
+      refreshing: false
+    })
+  })
+}
+
+_onEndReached(){
+  this.getMoviesFromApi();
+}
+
+List(){
+  return(
+    <ListView
+       refreshControl={
+       <RefreshControl
+         refreshing={this.state.refreshing}
+         onRefresh={this._onRefresh.bind(this)}
+       />}
+      dataSource={this.state.dataSource}
+      renderRow={(rowData) => this.renderRow(rowData)}
+      onEndReached={this._onEndReached.bind(this)}
+      enableEmptySections={true}
+    />)
+}
+Grid(){
+  return (
+    <ListView  contentContainerStyle={styles.list}
+     refreshControl={
+     <RefreshControl
+       refreshing={this.state.refreshing}
+       onRefresh={this._onRefresh.bind(this)}
+     />}
+    dataSource={this.state.dataSource}
+    renderRow={(rowData) => this.renderRowGrid(rowData)}
+    onEndReached={this._onEndReached.bind(this)}
+    enableEmptySections={true}
+  />)
 }
   render(){
-    var row = "";
-    if(this.state.listView === true){
-       row = <ListView
-          refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)}
-          />}
-          dataSource={this.state.dataSource}
-          renderRow={(rowData) => this.renderRow(rowData)}
-          enableEmptySections={true}
-        />
-    }
-    else{
-       row = <ListView  contentContainerStyle={styles.list}
-         refreshControl={
-         <RefreshControl
-           refreshing={this.state.refreshing}
-           onRefresh={this._onRefresh.bind(this)}
-         />}
-        dataSource={this.state.dataSource}
-        renderRow={(rowData) => this.renderRowGrid(rowData)}
-        enableEmptySections={true}
-      />
-    }
     var iconName = this.state.listView === true ? "ios-grid-outline" : "ios-list-box-outline";
     return(
       <View style={{backgroundColor: "orange"}}>
@@ -186,21 +199,23 @@ _onRefresh(){
             <Icon name={iconName} size={50}/>
           </TouchableOpacity>
         </View>
-          {row}
+        {/* {this.Grid()} */}
+        {this.state.listView === true ? this.List() : this.Grid()}
       </View>
     )
   }
 }
 
+
 var styles = StyleSheet.create({
     list: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: "center"
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+     justifyContent: "center"
     },
     item: {
       margin: 2,
       width: Dimensions.get('screen').width*.47,
-      height: Dimensions.get('screen').height*.4,
+      height: Dimensions.get('screen').height*.45,
     }
 });
