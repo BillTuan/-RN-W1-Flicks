@@ -39,9 +39,9 @@ export default class ListCom extends Component {
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({
-        _postData : this.state._postData.concat(responseJson.results),
-        dataSource: this.state.dataSource.cloneWithRows(this.state._postData),
-        isFirstPage: false,
+       _postData : this.state._postData.concat(responseJson.results),
+       dataSource: this.state.dataSource.cloneWithRows(this.state._postData),
+       isFirstPage: false,
         currentPage: this.state.currentPage + 1,
       })
     })
@@ -159,6 +159,7 @@ _onEndReached(){
 List(){
   return(
     <ListView
+      contentContainerStyle={styles.abc}
        refreshControl={
        <RefreshControl
          refreshing={this.state.refreshing}
@@ -199,8 +200,8 @@ Grid(){
             <Icon name={iconName} size={50}/>
           </TouchableOpacity>
         </View>
-        {/* {this.Grid()} */}
         {this.state.listView === true ? this.List() : this.Grid()}
+        {/* {this.Grid()} */}
       </View>
     )
   }
@@ -217,5 +218,8 @@ var styles = StyleSheet.create({
       margin: 2,
       width: Dimensions.get('screen').width*.47,
       height: Dimensions.get('screen').height*.45,
+    },
+    abc:{
+      marginTop: 1
     }
 });
